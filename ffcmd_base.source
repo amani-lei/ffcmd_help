@@ -1,0 +1,53 @@
+export CODEC_V="copy $EN_V $DE_V"
+export CODEC_A="copy $EN_A $DE_A"
+export CODEC_S="copy $EN_S $DE_S"
+
+export CODEC="copy $CODEC_V $CODEC_A $CODEC_S"
+
+
+export OPTS="$OPTS"
+export OPT_I='http:// https:// rtmp:// '
+
+_ffmpeg()
+{
+	COMPREPLY=()
+	local cur=${COMP_WORDS[COMP_CWORD]};
+	local cmd=${COMP_WORDS[COMP_CWORD-1]};
+	if [ "${cur}x" != "x" ];then
+	       case ${cur} in
+			'?')
+				;;
+			'??')
+				;;
+			*)
+				;;
+		esac
+	fi
+	if [ "${COMPREPLY[@]}x" != "x" ];then
+	       return;
+	fi
+	case $cmd in
+		'-i')
+			COMPREPLY=( $(compgen -W "${OPT_I}" -- $cur)  );;
+		'-f')
+			;;
+		'-c')
+			COMPREPLY=( $(compgen -W "${CODEC}" -- $cur)  );;
+		'-c:a')
+			COMPREPLY=( $(compgen -W "${CODEC_A}" -- $cur)  );;
+		'-c:v')
+			COMPREPLY=( $(compgen -W "${CODEC_V}" -- $cur)  );;
+		'-c:s')
+			COMPREPLY=( $(compgen -W "${CODEC_S}" -- $cur)  );;
+		'-filter')
+			COMPREPLY=( $(compgen -W "${FILTERS}" -- $cur)  );;
+		'?')
+			COMPREPLY=( $(compgen -W "copy" -- $cur)  );;
+		'??')
+			;;
+		*)
+			COMPREPLY=( $(compgen -W "${OPTS}" -- $cur) );;
+	esac
+}
+
+complete -F _ffmpeg -A file ffmpeg 
