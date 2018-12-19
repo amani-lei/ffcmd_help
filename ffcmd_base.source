@@ -16,6 +16,8 @@ _ffmpeg()
 	local cmd=${COMP_WORDS[COMP_CWORD-1]};
 	if [ "${cur}x" != "x" ];then
 	       case ${cur} in
+	       		'-c')
+				COMPREPLY=( $(compgen -W "-c:v -c:a -c:s" -- $cur)  );;
 			'?')
 				;;
 			'??')
