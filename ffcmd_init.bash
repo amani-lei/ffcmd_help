@@ -105,3 +105,4 @@ echo "Options:"
 echo "${OPTS[@]}"
 echo "export OPTS=\"${OPTS[@]}\"" >> $FFCMD
 cat $FFCMD_BASE >> $FFCMD
+source $FFCMD
