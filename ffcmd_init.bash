@@ -1,3 +1,4 @@
+#helei0908@hotmail.com
 FFMPEG=ffmpeg
 $FFMPEG -version || exit
 
@@ -76,13 +77,14 @@ FILTERS=${RET[@]}
 _opt "$opt_file" 0 0 "^-"
 OPTS=${RET[@]}
 
-#rm ${en_file}
-#rm ${de_file}
-#rm ${filter_file}
-#rm ${opt_file}
+rm ${en_file}
+rm ${de_file}
+rm ${filter_file}
+rm ${opt_file}
 
 rm $FFCMD
-
+echo "#helei0908#hotmail.com" > $FFCMD
+echo "" >> $FFCMD
 echo "Encoders:"
 echo "${EN_V[@]} ${EN_A[@]} ${EN_S[@]}"
 echo "export EN_V=\"${EN_V[@]}\"" >> $FFCMD
@@ -102,4 +104,4 @@ echo "export FILTERS=\"${FILTERS[@]}\"" >> $FFCMD
 echo "Options:"
 echo "${OPTS[@]}"
 echo "export OPTS=\"${OPTS[@]}\"" >> $FFCMD
-cat ffcmd_rom.sh >> $FFCMD
+cat $FFCMD_BASE >> $FFCMD
