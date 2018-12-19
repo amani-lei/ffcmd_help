@@ -4,6 +4,7 @@ export CODEC_S="copy $EN_S $DE_S"
 
 export CODEC="copy $CODEC_V $CODEC_A $CODEC_S"
 
+export FILTERS=$FILTERS
 
 export OPTS="$OPTS"
 export OPT_I='http:// https:// rtmp:// '
@@ -41,10 +42,6 @@ _ffmpeg()
 			COMPREPLY=( $(compgen -W "${CODEC_S}" -- $cur)  );;
 		'-filter')
 			COMPREPLY=( $(compgen -W "${FILTERS}" -- $cur)  );;
-		'?')
-			COMPREPLY=( $(compgen -W "copy" -- $cur)  );;
-		'??')
-			;;
 		*)
 			COMPREPLY=( $(compgen -W "${OPTS}" -- $cur) );;
 	esac
