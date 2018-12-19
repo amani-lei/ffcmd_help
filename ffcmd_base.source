@@ -1,12 +1,12 @@
-export CODEC_V="copy $EN_V $DE_V"
-export CODEC_A="copy $EN_A $DE_A"
-export CODEC_S="copy $EN_S $DE_S"
+export CODEC_V="copy ${EN_V} ${DE_V}"
+export CODEC_A="copy ${EN_A} ${DE_A}"
+export CODEC_S="copy ${EN_S} ${DE_S}"
 
-export CODEC="copy $CODEC_V $CODEC_A $CODEC_S"
+export CODEC="copy ${CODEC_V} ${CODEC_A} ${CODEC_S}"
 
-export FILTERS=$FILTERS
+export FILTERS=${FILTERS}
 
-export OPTS="$OPTS"
+export OPTS="${OPTS}"
 export OPT_I='http:// https:// rtmp:// '
 
 _ffmpeg()
