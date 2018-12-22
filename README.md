@@ -1,7 +1,8 @@
 ffcmd_help
 ======
-Automatically complete ffmpeg parameters for you
-一个自动补齐/提示工具,可以自动提示/补齐FFMpeg的参数或选项
+Automatically complete ffmpeg parameters for you~<br>
+一个自动补齐/提示工具,可以自动提示/补齐FFMpeg的参数或选项<br>
+BY:何磊 HE LEI    helei0908@hotmail.com
 
 First:首次
 -----
@@ -10,9 +11,13 @@ First:首次
 *  3, $chmod +x ./ffcmd_init.bash && ./ffcmd_init.bash
 *  4, $source ./ffcmd.source
 
-Future:以后
+After:以后每次
 -----
-*  4, $source ./ffcmd.source
+*  4, $source ./ffcmd.source<br>
+*  #If you want the shell to automatically take effect each time you open it, add the "source your_path/ffcmd.source" command to "~/.bashrc"
+>如果希望每次打开shell自动生效, 请将"source your_path/ffcmd.source"命令, 添加到"~/.bashrc"中
+
+
 
 Usage:用法
 -----
