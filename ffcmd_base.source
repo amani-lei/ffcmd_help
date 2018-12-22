@@ -113,7 +113,6 @@ _short()
                         COMPREPLY=( $(compgen -W "-filter")  );;
                 'bf' | '-bf')
                         COMPREPLY=( $(compgen -W "-bsfs")  );;
-                        ;;
         esac
 }
 
