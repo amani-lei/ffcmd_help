@@ -1,3 +1,5 @@
+
+# helei0908@hotmail.com
 export CODEC_V="copy ${EN_V} ${DE_V}"
 export CODEC_A="copy ${EN_A} ${DE_A}"
 export CODEC_S="copy ${EN_S} ${DE_S}"
@@ -6,47 +8,152 @@ export CODEC="copy ${CODEC_V} ${CODEC_A} ${CODEC_S}"
 
 export FILTERS=${FILTERS}
 
-export OPTS="${OPTS}"
+export OPTS="${OPTS} -filter_complex"
 export OPT_I='http:// https:// rtmp:// '
+
+export DEMUXERS="${FMT_DEMUX}"
+export MUXERS="${FMT_MUX}"
+export FORMATS="${DEMUXERS} ${MUXERS}"
+
+_str_cchar()
+{
+        local str=$1
+        local num=0
+        for ((i=0;$i<=${#str};i=$i+1));
+        do
+                if [ "${str:$i:1}" = "$2" ];then
+                        num=$(($num+1))
+                fi
+        done
+        return $num
+}
+
+_mid_words()
+{
+        MID_WORDS=()
+        local str="$1"
+        local begin="$2"
+        local end="$3"
+        local prefix="$4"
+        local i=1
+        while [[  "" = "" ]]
+        do
+                local s=`echo ${str} | cut -d] -f ${i} | cut -d[ -f2`
+                if [ "${s} x" = " x" ];then
+                        break
+                fi
+                i=$[${i}+1]
+                MID_WORDS=("${MID_WORDS[@]}" "${prefix}${s}" )
+        done
+        return ${#MID_WORDS[@]}
+}
+_last_word()
+{
+        LAST_WORD=""
+        local str=$1
+        local len=${#str}
+	       local i=0
+        for ((i=len-1;i>=0;i--))
+        do
+                case "${str: $i:1}" in
+                        [a-z] | [A-Z] | [0-9])
+                                LAST_WORD="${str: $i:1}${LAST_WORD}"
+                                ;;
+                        *)
+                                break
+                                ;;
+                esac
+        done
+}
+
+_ffmpeg_filter()
+{
+        local cmd=$1
+        local cur=$2
+        local ftr=""
+        local pre=""
+#in string
+        _last_word "$cur"
+
+        ftr="${LAST_WORD}"
+        pre="${cur: 0: ${#cur}-${#ftr}}"
+        COMPREPLY=( $(compgen -W "${FILTERS}" -P "$pre" -- "$ftr")  )
+}
+
+_ffmpeg_tag()
+{
+        local filter=$1
+        _mid_words "${COMP_LINE}" '[' ']'
+        if [ "$?" != "0" ];then
+                local l="${MID_WORDS[@]}"
+                COMPREPLY=( $(compgen -W "${l}"  -- "" )  )
+        fi
+}
+
+_ffmpeg_cmdx()
+{
+        local cur=$2
+        local cmd=$1
+        local last=${cmd: -1}
+        case $last in
+                ';' | '"' | ']')
+                        _ffmpeg_filter "$cur"
+                        ;;
+        esac
+}
+
+
+_short()
+{
+        local str=$1
+        case $str in
+                'fc' | '-fc')
+                        COMPREPLY=( $(compgen -W "-filter_complex")  );;
+                'fi' | '-fi')
+                        COMPREPLY=( $(compgen -W "-filter")  );;
+                'bf' | '-bf')
+                        COMPREPLY=( $(compgen -W "-bsfs")  );;
+                        ;;
+        esac
+}
 
 _ffmpeg()
 {
-	COMPREPLY=()
-	local cur=${COMP_WORDS[COMP_CWORD]};
-	local cmd=${COMP_WORDS[COMP_CWORD-1]};
-	if [ "${cur}x" != "x" ];then
-	       case ${cur} in
-	       		'-c')
-				COMPREPLY=( $(compgen -W "-c:v -c:a -c:s" -- $cur)  );;
-			'?')
-				;;
-			'??')
-				;;
-			*)
-				;;
-		esac
-	fi
-	if [ "${COMPREPLY[@]}x" != "x" ];then
-	       return;
-	fi
-	case $cmd in
-		'-i')
-			COMPREPLY=( $(compgen -W "${OPT_I}" -- $cur)  );;
-		'-f')
-			;;
-		'-c')
-			COMPREPLY=( $(compgen -W "${CODEC}" -- $cur)  );;
-		'-c:a')
-			COMPREPLY=( $(compgen -W "${CODEC_A}" -- $cur)  );;
-		'-c:v')
-			COMPREPLY=( $(compgen -W "${CODEC_V}" -- $cur)  );;
-		'-c:s')
-			COMPREPLY=( $(compgen -W "${CODEC_S}" -- $cur)  );;
-		'-filter')
-			COMPREPLY=( $(compgen -W "${FILTERS}" -- $cur)  );;
-		*)
-			COMPREPLY=( $(compgen -W "${OPTS}" -- $cur) );;
-	esac
+        COMPREPLY=()
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        local cmd="${COMP_WORDS[COMP_CWORD-1]}"
+        _short "$cur"
+        local tmp="${COMPREPLY[@]}"
+        if [ "${tmp} x" != " x" ];then
+               return
+        fi
+        case ${cur:0:1} in
+                '-')
+                COMPREPLY=( $(compgen -W "${OPTS}" -- $cur)  );;
+        esac
+        tmp="${COMPREPLY[@]}"
+        if [ "${tmp} x" != " x" ];then
+               return
+        fi
+        case $cmd in
+                '-i')
+                        COMPREPLY=( $(compgen -W "${OPT_I}" -- $cur)  );;
+                '-f')
+                        COMPREPLY=( $(compgen -W "${FORMATS}" -- $cur)  );;
+                '-c')
+                        COMPREPLY=( $(compgen -W "${CODEC}" -- $cur)  );;
+                '-c:a')
+                        COMPREPLY=( $(compgen -W "${CODEC_A}" -- $cur)  );;
+                '-c:v')
+                        COMPREPLY=( $(compgen -W "${CODEC_V}" -- $cur)  );;
+                '-c:s')
+                        COMPREPLY=( $(compgen -W "${CODEC_S}" -- $cur)  );;
+                '-vf' | '-af' | '-bsfs' | '-filter' | '-filter_complex')
+                        _ffmpeg_filter "$cmd" "${cur}"
+			                        ;;
+                *)
+                        ;;
+        esac
 }
 
-complete -F _ffmpeg -A file ffmpeg 
+complete -F _ffmpeg -A file ffmpeg
